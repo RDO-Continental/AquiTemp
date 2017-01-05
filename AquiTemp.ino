@@ -1,3 +1,6 @@
+//#define DEBUG
+#include "debug.h"
+
 #define _TASK_SLEEP_ON_IDLE_RUN
 #include <TaskScheduler.h>
 #include "affiche.h"
@@ -37,8 +40,8 @@ Task txReccord(5000, TASK_FOREVER, &txReccordCallback);
 char *csv_header[] = { "Date", "Heure", "T1", "T2", "T3", "T4", "Circulateur"};
 
 void t10msCallback() {
-    Serial.print("T10ms=");
-    Serial.println(millis()-syncTime10ms);
+    DEBUG_PRINT("T10ms=");
+    DEBUG_PRINTLN(millis()-syncTime10ms);
     syncTime10ms=millis();
     durTime10ms=millis();
   rotary_bgd(); /* Produit l'état du bouton : Incrément/Decrement et Appuis */
@@ -105,13 +108,13 @@ void t10msCallback() {
       // default is optional
       break;
   }
-Serial.print("Tdur=");
-  Serial.println(millis()-durTime10ms);
+DEBUG_PRINT("Tdur=");
+  DEBUG_PRINTLN(millis()-durTime10ms);
 }/*Fct_end*/
 
 void txReccordCallback() {
-   Serial.print("Trecms=");
-   Serial.println(millis()-syncTimeRecms);
+   DEBUG_PRINT("Trecms=");
+   DEBUG_PRINTLN(millis()-syncTimeRecms);
    syncTimeRecms=millis();
   /* On reccupere la date et l'heure */
   /* On reccupere les températures */
@@ -120,15 +123,17 @@ void txReccordCallback() {
 }
 
 void t100msCallback() {
-    Serial.print("T100ms=");
-    Serial.println(millis()-syncTime100ms);
+    DEBUG_PRINT("T100ms=");
+    DEBUG_PRINTLN(millis()-syncTime100ms);
+    
     syncTime100ms=millis();
     magneto_bgd();
     time_bgd();
     durTime100ms=millis();
     affiche_bgd();
-    Serial.print("Tdur100ms=");
-  Serial.println(millis()-durTime100ms);
+    
+    DEBUG_PRINT("Tdur100ms=");
+    DEBUG_PRINTLN(millis()-durTime100ms);
 }
 
 void t1000msCallback() {
@@ -136,13 +141,19 @@ void t1000msCallback() {
 }
 void setup () {
   Serial.begin(115200);
-  Serial.println("Scheduler TEST");
+  DEBUG_PRINTLN("Scheduler TEST");
   rotary_init();
+  DEBUG_PRINTLN("rotary_init TEST");
   temperature_init();
+  DEBUG_PRINTLN("temperature_init TEST");
   magneto_init();
+  DEBUG_PRINTLN("magneto_init TEST");
   time_init();
+  DEBUG_PRINTLN("time_init TEST");
   affiche_init();
+  DEBUG_PRINTLN("affiche_init TEST");
   sdcard_init();
+  DEBUG_PRINTLN("sdcard_init TEST");
   delay(1000);
 
   runner.startNow();  // set point-in-time for scheduling start

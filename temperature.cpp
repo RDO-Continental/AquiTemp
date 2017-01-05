@@ -1,4 +1,6 @@
 //#define DEBUG
+#include "debug.h"
+
 #include "Arduino.h"
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -25,8 +27,8 @@ DeviceAddress insideThermometer[NUMBER_SENSOR]; /* Tableau des adresses de chaqu
     for (i = 0; i < 8; i++)
     {
       // zero pad the address if necessary
-      if (deviceAddress[i] < 16) Serial.print("0");
-      Serial.print(deviceAddress[i], HEX);
+      if (deviceAddress[i] < 16) DEBUG_PRINT("0");
+      DEBUG_PRINT(deviceAddress[i], HEX);
     }
   }
 #endif
@@ -40,14 +42,13 @@ void temperature_init(void)
   
   sensors.begin();
   
-  #ifdef DEBUG
-    Serial.println("Temperature initialisation");
+    DEBUG_PRINTLN("Temperature initialisation");
     // locate devices on the bus
-    Serial.print("Locating devices...");
-    Serial.print("Found ");
-    Serial.print(sensors.getDeviceCount(), DEC);
-    Serial.println(" devices.");
-  #endif
+    DEBUG_PRINT("Locating devices...");
+    DEBUG_PRINT("Found ");
+    DEBUG_PRINTDEC(sensors.getDeviceCount(), DEC);
+    DEBUG_PRINTLN(" devices.");
+
 
   TempDevicesFound = sensors.getDeviceCount(); 
   
@@ -57,27 +58,23 @@ void temperature_init(void)
   // Search for devices by index
   for (i = 0; i < TempDevicesFound; i++)
     if (!sensors.getAddress(insideThermometer[i], i)) {
-      #ifdef DEBUG
-        Serial.println("Unable to find address for Device" + i); 
-      #endif
+        DEBUG_PRINTLN("Unable to find address for Device" + i); 
     }
       
   #ifdef DEBUG    
     for (i = 0; i < TempDevicesFound; i++)
     {    
-      Serial.print("Device " + (String)i + " Address: ");
+      DEBUG_PRINT("Device " + (String)i + " Address: ");
       printAddress(insideThermometer[i]);
-      Serial.println();
+      DEBUG_PRINTLN();
     }
   #endif
   /* Changement de la r�solution par capteur 9 ou 12 bits */
   for (i = 0; i < TempDevicesFound; i++) {
     sensors.setResolution(insideThermometer[i], TEMPERATURE_PRECISION);
-    #ifdef DEBUG 
-      Serial.print("Device "+(String)i + " Resolution: ");
-      Serial.print(sensors.getResolution(insideThermometer[i]), DEC); 
-      Serial.println();
-    #endif
+    DEBUG_PRINT("Device "+(String)i + " Resolution: ");
+    DEBUG_PRINTDEC(sensors.getResolution(insideThermometer[i]), DEC); 
+      DEBUG_PRINTLN();
   }
 }
 
@@ -91,20 +88,13 @@ void temperature_bgd(void)
   	/* Memorisation des r�sultats */
   	for (i=0 ; i < TempDevicesFound ; i++){
 	    tempC[i] = sensors.getTempC(insideThermometer[i]);
-    	#ifdef DEBUG 
-	      Serial.println(tempC[i]);
-    	#endif
+	      DEBUG_PRINTLN(tempC[i]);
   	}
 	}
-  #ifdef DEBUG 
-    Serial.print("Requesting temperatures...");
-  #endif
+  DEBUG_PRINT("Requesting temperatures...");
   sensors.setWaitForConversion(false);  /* On lance la conversion mais on n'attend pas la r�ponse */
   sensors.requestTemperatures();        /* On aura la r�ponse au coup d'apr�s */
   firstAqui=1;                          /* On indique que la premiere acquisition a bien �t� lanc�e */
-  #ifdef DEBUG 
-    Serial.println("DONE");
-  #endif
-  
+  DEBUG_PRINTLN("DONE"); 
 }
 

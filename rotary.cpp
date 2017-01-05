@@ -1,4 +1,6 @@
 //#define DEBUG
+#include "debug.h"
+
 #include "Arduino.h"
 #include "Encoder.h"
 #include "rotary.h"
@@ -28,10 +30,8 @@ void rotary_bgd(void){
       rotary_state=DECREMENT;
       if (newPosition > oldPosition){rotary_state=INCREMENT;}
       oldPosition = newPosition;
-      #ifdef DEBUG
-        Serial.print("New:");
-        Serial.println(newPosition/2);
-      #endif
+      DEBUG_PRINT("New:");
+      DEBUG_PRINTLN(newPosition/2);
     }
 
     /* Lecture du bouton : Appuis*/
@@ -59,10 +59,8 @@ void rotary_bgd(void){
       if (newButton == 1) {rotary_state=PUSHED;} /* Si on trourne alors qu'il y a appuis, on n'en tinet pas compte */
       oldButton = newButton;
       rotary_select_changed=1;
-      #ifdef DEBUG
-        Serial.print("newButton:");
-        Serial.println(newButton);
-      #endif
+      DEBUG_PRINT("newButton:");
+      DEBUG_PRINTLN(newButton);
     }
     else{
       rotary_select_changed=0;

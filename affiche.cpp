@@ -1,3 +1,5 @@
+//#define DEBUG
+#include "debug.h"
 #include "Arduino.h"
 #include "U8glib.h"
 #include "SPI.h"
@@ -23,7 +25,7 @@ byte picture_finished;
 
 void affiche_init(void) {
   /* Reset the display */
-  Serial.print("test afficheur");
+  DEBUG_PRINT("test afficheur");
   /* Display some text using a small 8x8 fixed width font */
 }
 
@@ -62,12 +64,22 @@ void draw(void) {
     u8g.setPrintPos(x, (y * 10) + 10);
     u8g.print(tempC[i]);
   }
+  if (TempDevicesFound==0){ /* Pas de capteur temperature branche*/
+     u8g.setPrintPos(x, ((y) * 10) + 10);
+     u8g.print(TEMP_ERROR_MSG);
+  }
 /* Affichage du Magnetometre */
     y++;
     u8g.setPrintPos(x, ((y) * 10) + 10);
     //u8g.setPrintPos(0, 20);
-    u8g.print(magneX);
-
+    if (MagnetoFound) {
+      u8g.print(magneX);  
+    }
+    else {
+        u8g.print(MAGNETO_ERROR_MSG); /* Pas de capteur magnetique branche*/
+    }
+    
+    
 /* Affichage de la partie basse */
   u8g.drawLine(0, 52, 123, 52); /* Separation partie menu en bas */
   u8g.drawLine(60, 52, 60, 63); /* Split menu en 2 */
@@ -117,8 +129,8 @@ void affiche_bgd(void) {
   if (picture_finished == 1) {
     durDraw = millis();
     draw();
-    Serial.print("TdurDraw=");
-    Serial.println(millis() - durDraw);
+    DEBUG_PRINT("TdurDraw=");
+    DEBUG_PRINTLN(millis() - durDraw);
     if (!u8g.nextPage()) {
       picture_finished = 0;
     }

@@ -2,6 +2,7 @@
 #define TEMPERATURE_h
 
 #define NUMBER_SENSOR 5 /* Nombre de capteurs 18B20 sur la ligne */
+#define TEMP_ERROR_MSG "No Temp found"
 
 extern void temperature_init(void);
 extern void temperature_bgd(void);

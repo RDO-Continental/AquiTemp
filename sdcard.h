@@ -7,6 +7,8 @@ enum sdcards_status {
   SDCARD_NEWFILE_ERROR
 };
 
+#define SDCARD_ERROR_MSG "No sdcard found"
+
 extern void sdcard_init(void);
 extern void sdcard_start_rec(char * tab_header[], byte nb_params);
 extern void sdcard_stop_rec(void);

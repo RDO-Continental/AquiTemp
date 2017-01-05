@@ -1,4 +1,6 @@
-//#define DEBUG
+#define DEBUG
+#include "debug.h"
+
 #include "Arduino.h"
 #include <SD.h>      /* Attention : Librairie SD specifique pour MEGA */
 #include "sdcard.h"
@@ -16,8 +18,8 @@ File logfile;
 // === gestion des erreurs
 void error(char *str)
 {
-  Serial.print("erreur: ");
-  Serial.println(str);
+  DEBUG_PRINT("erreur: ");
+  DEBUG_PRINTLN(str);
 
   // La LED rouge indique les erreurs
   //digitalWrite(redLEDpin, HIGH);
@@ -30,11 +32,11 @@ void error(char *str)
 /*-------------------------------------------------------------------------------------------------*/
 void sdcard_init(void)
 {
-  Serial.println("Mon datalogger ");
-  Serial.println();
+  DEBUG_PRINTLN("Mon datalogger ");
+  DEBUG_PRINTLN();
 
   // Initialiser la SD
-  Serial.print("Initialiser la carte SD...");
+  DEBUG_PRINT("Initialiser la carte SD...");
   pinMode(DATALOG_CS, OUTPUT);
   
   /* regarder si la carte SD est présente et initialisable */
@@ -45,7 +47,7 @@ void sdcard_init(void)
     sdcard_status = SDCARD_MISSING;
   }
   else {
-    Serial.println("carte initialisee");
+    DEBUG_PRINTLN("carte initialisee");
     sdcard_status = SDCARD_AVAILABLE;
   }
 }
@@ -74,8 +76,8 @@ void sdcard_start_rec(char * tab_header[], byte nb_params) {
     error("Ne peut pas creer le fichier");
     sdcard_status = SDCARD_NEWFILE_ERROR;
   }
-    Serial.print("Enregistrer dans : ");
-    Serial.println(filename);
+    DEBUG_PRINT("Enregistrer dans : ");
+    DEBUG_PRINTLN(filename);
     //Première ligne du fichier CSV pour excel
     for (i = 0; i < nb_params; i++) {
       logfile.print(tab_header[i]);
@@ -96,8 +98,10 @@ void sdcard_stop_rec(void) {
 void sdcard_save_data(void){ //char * data_tab[]) {
   /* Save : Date, Time, T1, T2, T3, T4, Circulateur*/
   byte i;
+  DEBUG_PRINTLN(DateString);
   logfile.print(DateString);
   logfile.print("; ");
+  DEBUG_PRINTLN(TimeString);
   logfile.print(TimeString);
   logfile.print("; ");
   for (i = 0; i < NUMBER_SENSOR; i++) {
@@ -128,8 +132,8 @@ void sdcard_bgd(void)
   logfile.print(m);           // millisecondes depuis le départ
   logfile.print(", ");
 #if ECHO_TO_SERIAL
-  Serial.print(m);
-  Serial.print(", ");
+  DEBUG_PRINT(m);
+  DEBUG_PRINT(", ");
 #endif
 
   // Mesurer le time RTC
